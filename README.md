@@ -1,5 +1,5 @@
 # addend
- This 'addend.py' code is a python utility intended for the BLIND folks.
+ This `'addend.py'` code is a python utility intended for the `BLIND` folks.
 
 For Visual Impaired (VI) folks it is NOT easy to listen to and
  explore large python code files where the number of indent spaces
@@ -7,7 +7,7 @@ For Visual Impaired (VI) folks it is NOT easy to listen to and
 
  'addend.py' adds #comments, like `'# :end: if'`, for easier sound recognition
  when a syntax block structure has ended as defined by python's space
- indentation rules. Those added '# \:end:' comment lines, placed whenever
+ indentation rules. Those added `'# :end:'` comment lines, placed whenever
  a syntax block has ended, hopefully it provides guidance for VI folks
  while they simultaneously deciphering python code and intently listening
  to unfamiliar python code with their favorite reader like JAWS or NVDA.
@@ -22,19 +22,19 @@ For Visual Impaired (VI) folks it is NOT easy to listen to and
 usage: addend.py [-h] [-r] [-d] [-v] [inFilename] [outFilename]
 
 positional arguments:
-  inFilename     process input inFilename.py to add '# \:end:' lines based on python indent rules.
+  inFilename     process input inFilename.py to add `'# :end:'` lines based on python indent rules.
   outFilename    specify optional outFilename.py ; DEFAULT is inFilename is replaced.
 
 optional arguments:
   -h, --help     show this help message and exit
-  -r, --remove   ONLY remove ALL '# \:end:' comment lines from input filename.
+  -r, --remove   ONLY remove ALL `'# :end:'` comment lines from input filename.
   -d, --debug    print debugging lines.
   -v, --version  print version number.
 
     Default output is 'inFilename.py' with '# :end:' comments added.
     Unchanged input file is SAVED as 'inFilename.MMDD-hhmmss.py'
 
- NOTE: all prior added "# \:end:" comment lines are removed
+ NOTE: all prior added `'# :end:'` comment lines are removed
  during the next addend.py run and are re-added accordingly.
 
 
@@ -50,11 +50,11 @@ optional arguments:
 
   The inserted Block-End-Comment line will read like this:
   
-  >> # \:end: class <name>
-  >> # \:end: def <name>
-  >> # \:end: if
-  >> # \:end: for
-  >> # \:end: while
+  >> `# :end: class <name>`
+  >> `# :end: def <name>`
+  >> `# :end: if`
+  >> `# :end: for`
+  >> `# :end: while`
 
  Deleted:
   all prior added comment lines starting with #endLabel
