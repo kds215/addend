@@ -5,7 +5,7 @@ For Visual Impaired (VI) folks it is NOT easy to listen to and
  explore large python code files where the number of indent spaces
  on each line of code has a syntactical meaning for python interpreters.
 
- 'addend.py' adds #comments, like '# \:end: if', for easier sound recognition
+ 'addend.py' adds #comments, like ['# :end: if'], for easier sound recognition
  when a syntax block structure has ended as defined by python's space
  indentation rules. Those added '# \:end:' comment lines, placed whenever
  a syntax block has ended, hopefully it provides guidance for VI folks
