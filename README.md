@@ -5,9 +5,9 @@ For Visual Impaired (VI) folks it is NOT easy to listen to and
  explore large python code files where the number of indent spaces
  on each line of code has a syntactical meaning for python interpreters.
 
- 'addend.py' adds #comments, like '# :end: if', for easier sound recognition
+ 'addend.py' adds #comments, like '# \:end: if', for easier sound recognition
  when a syntax block structure has ended as defined by python's space
- indentation rules. Those added '# :end:' comment lines, placed whenever
+ indentation rules. Those added '# \:end:' comment lines, placed whenever
  a syntax block has ended, hopefully it provides guidance for VI folks
  while they simultaneously deciphering python code and intently listening
  to unfamiliar python code with their favorite reader like JAWS or NVDA.
@@ -22,26 +22,26 @@ For Visual Impaired (VI) folks it is NOT easy to listen to and
 usage: addend.py [-h] [-r] [-d] [-v] [inFilename] [outFilename]
 
 positional arguments:
-  inFilename     process input inFilename.py to add '# :end:' lines based on python indent rules.
+  inFilename     process input inFilename.py to add '# \:end:' lines based on python indent rules.
   outFilename    specify optional outFilename.py ; DEFAULT is inFilename is replaced.
 
 optional arguments:
   -h, --help     show this help message and exit
-  -r, --remove   ONLY remove ALL '# :end:' comment lines from input filename.
+  -r, --remove   ONLY remove ALL '# \:end:' comment lines from input filename.
   -d, --debug    print debugging lines.
   -v, --version  print version number.
 
     Default output is 'inFilename.py' with '# :end:' comments added.
     Unchanged input file is SAVED as 'inFilename.MMDD-hhmmss.py'
 
- NOTE: all prior added "# :end:" comment lines are removed
+ NOTE: all prior added "# \:end:" comment lines are removed
  during the next addend.py run and are re-added accordingly.
 
 
   To define your own string for the BLOCK-End-Comment
   change the variable 'endLabel' in the code from:
   
-    endLabel = "# :end:"  (requires leading "# ")
+    endLabel = "# \:end:"  (requires leading "# ")
 
     to for examples:   
         endLabel = "# :}:"
@@ -50,11 +50,11 @@ optional arguments:
 
   The inserted Block-End-Comment line will read like this:
   
-  >> # :end: class <name>
-  >> # :end: def <name>
-  >> # :end: if
-  >> # :end: for
-  >> # :end: while
+  >> # \:end: class <name>
+  >> # \:end: def <name>
+  >> # \:end: if
+  >> # \:end: for
+  >> # \:end: while
 
  Deleted:
   all prior added comment lines starting with #endLabel
@@ -88,10 +88,10 @@ optional arguments:
 
           retrieve the blockstarter's syntaxType + indent to close block;
                 scan backwards from the current line 
-                to find 1st line of simple CODE to add '# :end:' comment(s)
+                to find 1st line of simple CODE to add '# \:end:' comment(s)
 
                   foreach prior blockstarter
-                    join that code line with '# :end:" comment line like:
+                    join that code line with '# \:end:" comment line like:
                     "\n (space * savedIndentLevel) + #endLabel + syntaxType"
 
      set savedIndentLevelValue from currentIndentLevelValue
