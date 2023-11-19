@@ -17,19 +17,19 @@ For Visual Impaired (VI) folks it is NOT easy to listen to and
 
  Place 'addend.py' into your working directory and run from command line:
 
-% python addend.py -h 
+`% python addend.py -h `
 
-usage: addend.py [-h] [-r] [-d] [-v] [inFilename] [outFilename]
+`usage: addend.py [-h] [-r] [-d] [-v] [inFilename] [outFilename]`
 
-positional arguments:
-  inFilename     process input inFilename.py to add `'# :end:'` lines based on python indent rules.
-  outFilename    specify optional outFilename.py ; DEFAULT is inFilename is replaced.
+`positional arguments:`
+  `inFilename     process input inFilename.py to add `'# :end:'` lines based on python indent rules.`
+  `outFilename    specify optional outFilename.py ; DEFAULT is inFilename is replaced.`
 
-optional arguments:
-  -h, --help     show this help message and exit
-  -r, --remove   ONLY remove ALL `'# :end:'` comment lines from input filename.
-  -d, --debug    print debugging lines.
-  -v, --version  print version number.
+`optional arguments:`
+  `-h, --help     show this help message and exit`
+  `-r, --remove   ONLY remove ALL `'# :end:'` comment lines from input filename.`
+  `-d, --debug    print debugging lines.`
+  `-v, --version  print version number.`
 
     Default output is 'inFilename.py' with '# :end:' comments added.
     Unchanged input file is SAVED as 'inFilename.MMDD-hhmmss.py'
