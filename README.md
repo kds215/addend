@@ -5,9 +5,9 @@
  explore large python code files where the number of indent spaces
  on each line of code has a syntactical meaning for python interpreters.
 
- 'addend' adds #comments, like '# :end: if', for easier sound recognition
- when a syntax block structure has ended as defined by python's space
- indentation rules. Those added '# :end:' comment lines are placed whenever
+ 'addend' adds #comments, like '`# :end: if`','`# :end: for`' etc, for easier 
+ sound recognition when a syntax block structure has ended as defined by python's space
+ indentation rules. Those added '`# :end:`' comment lines are placed whenever
  a syntax block has ended.  Hopefully, these #comments provides guidance for VI folks
  while they simultaneously deciphering python code and intently listening
  to unfamiliar python code with their favorite reader like JAWS or NVDA.
@@ -27,7 +27,7 @@
  "Generally, if you're used to curly braces {} language, 
   just indent the code like them and you'll be fine." 
 
-  <b>should be expanded ==></b> "except when you are blind and depend on a reader".
+  <b>should be expanded to ==></b> "except when you are blind and depend on a reader".
 
  Blind folks are an excellent resource and are disadvantaged
  in today's fast past AI work environments when it comes to using python.
