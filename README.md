@@ -9,7 +9,7 @@
  sound recognition when a syntax block structure has ended as defined by python's space
  indentation rules. Those added '`# :end:`' comment lines are placed whenever
  a syntax block has ended.  Hopefully, these #comments provides guidance for VI folks
- while they simultaneously deciphering python code and intently listening
+ while they simultaneously decipher python code and intently listen
  to unfamiliar python code with their favorite reader like JAWS or NVDA.
 
  Python started in 1991 and is now a popular programming language because of
@@ -29,8 +29,7 @@
 
   <b>should be expanded to ==></b> "except when you are blind and depend on a reader".
 
- Blind folks are an excellent resource and are disadvantaged
- in today's fast past AI work environments when it comes to using python.
+ Blind folks are disadvantaged in today's fast past AI work environments when it comes to using python.
 
  'addend' is hopefully a simple step to make it easier for the
  VI folks to use JAWS or NVDA readers and work on 
