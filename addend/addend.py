@@ -248,7 +248,7 @@ def getIndentCount(string):
                 continue
             # :end: if
 
-            if i == "\t":
+            if i == r"\t":
                 raise Exception(
                     "...python trouble when indentation mixes tabs & spaces..."
                 )
