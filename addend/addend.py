@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Name: addend.py  KDS 11/17/2023
+# Name: addend.py  KDS 11/22/2023
 
-isVersion = "1.14"
+isVersion = "1.15"  
 
-# KDS 11/20/23 changes for pip deployment on windows and MacOS
-
+# KDS added :end: block for try:, except: & finally: statements
 
 """
+isVersion = "1.14"  # KDS 11/20/23 changes for pip deployment on windows and MacOS
 isVersion = "1.12"  # KDS 11/19/23 switched to addend; no more 'python addend.py'
 isVersion = "1.11"  # KDS 11/18/23 changed to optional different output filename
                     # i.e. [-h] [-r] [-d] [-v] [inFilename] [outFilename]
@@ -214,6 +214,15 @@ while_regex = re.compile(r"^\s*while ")
 # with
 with_regex = re.compile(r"^\s*with ")
 
+# try
+try_regex = re.compile(r"^\s*try:")
+
+# except
+except_regex = re.compile(r"^\s*except.*:")
+
+# finally
+finally_regex = re.compile(r"^\s*finally:")
+
 # import
 import_regex = re.compile(r"^\s*import ")
 
@@ -346,6 +355,9 @@ def load_input(filename):
         # :end: for
     # :end: with
 
+    # add temp last line for proper '# :end:' closing
+    data_without_endLabels.append("#!!end: ")
+
     return data_without_endLabels
 
 
@@ -353,6 +365,10 @@ def load_input(filename):
 
 
 def write_output(filename, data_EBS):
+
+    # remove temp last line that enforced proper :end: closing
+    data_EBS.pop() 
+
     # write output file containing #endLabel comments
     with open(filename, "w") as f:
         for line in data_EBS:
@@ -549,6 +565,28 @@ def classify_lines(data):
             continue
         # :end: if
 
+        isTry, index = upd_indent(
+            "try", try_regex, data, type, index, cache, identLevel, startsBLOCK
+        )
+        if isTry:
+            continue
+        # :end: if
+
+        isExcept, index = upd_indent(
+            "except", except_regex, data, type, index, cache, identLevel, startsBLOCK
+        )
+        if isExcept:
+            continue
+        # :end: if
+
+        isFinally, index = upd_indent(
+            "finally", finally_regex, data, type, index, cache, identLevel, startsBLOCK
+        )
+        if isFinally:
+            continue
+        # :end: if
+
+
         # must be plain line of code
         type[index] = [identLevel, isCODE, noBLOCK]
 
@@ -586,7 +624,7 @@ def insert_End_comment(type, data, index, cache, currentIndentValue, indentStack
         # :end: if
     # :end: if
     else:
-        # empty stock ergo no blocks to close
+        # empty stack ergo no blocks to close
         return
     # :end: else:
 
@@ -763,6 +801,7 @@ def main():
     global class_regex, def_regex, if_regex, else_regex
     global elif_regex, for_regex, while_regex, with_regex
     global import_regex, from_regex, MLC_regex
+    global try_regex, except_regex, finally_regex
 
     # start processing python input file...
     #
