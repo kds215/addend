@@ -1,0 +1,242 @@
+
+processing:
+   >>>  input==> libisl.23.dylib-gdb.py
+   >>> saveAs==> libisl.23.dylib-gdb.1124_231852.py
+   >>> output==> libisl.23.dylib-gdb.py
+
+Traceback (most recent call last):
+  File "/Users/klaus/.env/bin/addend", line 8, in <module>
+    sys.exit(main())
+  File "/Users/klaus/.env/lib/python3.9/site-packages/addend/command_line.py", line 4, in main
+    addend.main()
+  File "/Users/klaus/.env/lib/python3.9/site-packages/addend/addend.py", line 911, in main
+    type, data, cache = classify_lines(pydata)
+  File "/Users/klaus/.env/lib/python3.9/site-packages/addend/addend.py", line 461, in classify_lines
+    index = testMLComment(data, type, index)
+  File "/Users/klaus/.env/lib/python3.9/site-packages/addend/addend.py", line 272, in testMLComment
+    lineHasMLC = MLC_regex.search(data[index])
+IndexError: list index out of range
+
+processing:
+   >>>  input==> libisl.23.dylib-gdb.py
+   >>> saveAs==> libisl.23.dylib-gdb.1124_231852.py
+   >>> output==> libisl.23.dylib-gdb.py
+
+
+   done: original input file saved as 'libisl.23.dylib-gdb.1124_231852.py'
+
+3a4
+> 
+6,26c7,35
+< 	"""Print an isl object"""
+< 	def __init__ (self, val, type):
+< 		self.val = val
+< 		self.type = type
+< 
+< 	def to_string (self):
+< 		# Cast val to a void pointer to stop gdb using this pretty
+< 		# printer for the pointer which would lead to an infinite loop.
+< 		void_ptr = gdb.lookup_type('void').pointer()
+< 		value = str(self.val.cast(void_ptr))
+< 		printer = gdb.parse_and_eval("isl_printer_to_str(isl_"
+< 					     + str(self.type)
+< 					     + "_get_ctx(" + value + "))")
+< 		printer = gdb.parse_and_eval("isl_printer_print_"
+< 					     + str(self.type) + "("
+< 					     + str(printer) + ", "
+< 					     + value + ")")
+< 		string = gdb.parse_and_eval("(char*)isl_printer_get_str("
+< 					    + str(printer) + ")")
+< 		gdb.parse_and_eval("isl_printer_free(" + str(printer) + ")")
+< 		return string
+---
+>     """Print an isl object"""
+> 
+>     def __init__(self, val, type):
+>         self.val = val
+>         self.type = type
+> 
+>     def to_string(self):
+>         # Cast val to a void pointer to stop gdb using this pretty
+>         # printer for the pointer which would lead to an infinite loop.
+>         void_ptr = gdb.lookup_type("void").pointer()
+>         value = str(self.val.cast(void_ptr))
+>         printer = gdb.parse_and_eval(
+>             "isl_printer_to_str(isl_" + str(self.type) + "_get_ctx(" + value + "))"
+>         )
+>         printer = gdb.parse_and_eval(
+>             "isl_printer_print_"
+>             + str(self.type)
+>             + "("
+>             + str(printer)
+>             + ", "
+>             + value
+>             + ")"
+>         )
+>         string = gdb.parse_and_eval("(char*)isl_printer_get_str(" + str(printer) + ")")
+>         gdb.parse_and_eval("isl_printer_free(" + str(printer) + ")")
+>         return string
+> 
+>     def display_hint(self):
+>         return "string"
+28,29d36
+< 	def display_hint (self):
+< 		return 'string'
+32,68c39,78
+< 	"""Print an isl_int """
+< 	def __init__ (self, val):
+< 		self.val = val
+< 
+< 	def to_string (self):
+< 		# Cast val to a void pointer to stop gdb using this pretty
+< 		# printer for the pointer which would lead to an infinite loop.
+< 		void_ptr = gdb.lookup_type('void').pointer()
+< 		value = str(self.val.cast(void_ptr))
+< 
+< 		context = gdb.parse_and_eval("isl_ctx_alloc()")
+< 		printer = gdb.parse_and_eval("isl_printer_to_str("
+< 					     + str(context) + ")")
+< 		printer = gdb.parse_and_eval("isl_printer_print_isl_int("
+< 					     + str(printer) + ", "
+< 					     + value + ")")
+< 		string = gdb.parse_and_eval("(char*)isl_printer_get_str("
+< 					    + str(printer) + ")")
+< 		gdb.parse_and_eval("isl_printer_free(" + str(printer) + ")")
+< 		gdb.parse_and_eval("isl_ctx_free(" + str(context) + ")")
+< 		return string
+< 
+< 	def display_hint (self):
+< 		return 'string'
+< 
+< class IslPrintCommand (gdb.Command):
+< 	"""Print an isl value."""
+< 	def __init__ (self):
+< 		super (IslPrintCommand, self).__init__ ("islprint",
+< 							gdb.COMMAND_OBSCURE)
+< 	def invoke (self, arg, from_tty):
+< 		arg = gdb.parse_and_eval(arg);
+< 		printer = str_lookup_function(arg)
+< 
+< 		if printer == None:
+< 			print("No isl printer for this type")
+< 			return
+---
+>     """Print an isl_int"""
+> 
+>     def __init__(self, val):
+>         self.val = val
+> 
+>     def to_string(self):
+>         # Cast val to a void pointer to stop gdb using this pretty
+>         # printer for the pointer which would lead to an infinite loop.
+>         void_ptr = gdb.lookup_type("void").pointer()
+>         value = str(self.val.cast(void_ptr))
+> 
+>         context = gdb.parse_and_eval("isl_ctx_alloc()")
+>         printer = gdb.parse_and_eval("isl_printer_to_str(" + str(context) + ")")
+>         printer = gdb.parse_and_eval(
+>             "isl_printer_print_isl_int(" + str(printer) + ", " + value + ")"
+>         )
+>         string = gdb.parse_and_eval("(char*)isl_printer_get_str(" + str(printer) + ")")
+>         gdb.parse_and_eval("isl_printer_free(" + str(printer) + ")")
+>         gdb.parse_and_eval("isl_ctx_free(" + str(context) + ")")
+>         return string
+> 
+>     def display_hint(self):
+>         return "string"
+> 
+> 
+> class IslPrintCommand(gdb.Command):
+>     """Print an isl value."""
+> 
+>     def __init__(self):
+>         super(IslPrintCommand, self).__init__("islprint", gdb.COMMAND_OBSCURE)
+> 
+>     def invoke(self, arg, from_tty):
+>         arg = gdb.parse_and_eval(arg)
+>         printer = str_lookup_function(arg)
+> 
+>         if printer == None:
+>             print("No isl printer for this type")
+>             return
+> 
+>         print(printer.to_string())
+70d79
+< 		print(printer.to_string())
+74,97c83,116
+< def str_lookup_function (val):
+< 	if val.type.code != gdb.TYPE_CODE_PTR:
+< 		if str(val.type) == "isl_int":
+< 			return IslIntPrinter(val)
+< 		else:
+< 			return None
+< 
+< 	lookup_tag = val.type.target()
+< 	regex = re.compile ("^isl_(.*)$")
+< 
+< 	if lookup_tag == None:
+< 		return None
+< 
+< 	m = regex.match (str(lookup_tag))
+< 
+< 	if m:
+< 		# Those types of printers defined in isl.
+< 		if m.group(1) in ["basic_set", "set", "union_set", "basic_map",
+< 				  "map", "union_map", "qpolynomial",
+< 				  "pw_qpolynomial", "pw_qpolynomial_fold",
+< 				  "union_pw_qpolynomial",
+< 				  "union_pw_qpolynomial_fold"]:
+< 			return IslObjectPrinter(val, m.group(1))
+< 	return None
+---
+> 
+> def str_lookup_function(val):
+>     if val.type.code != gdb.TYPE_CODE_PTR:
+>         if str(val.type) == "isl_int":
+>             return IslIntPrinter(val)
+>         else:
+>             return None
+> 
+>     lookup_tag = val.type.target()
+>     regex = re.compile("^isl_(.*)$")
+> 
+>     if lookup_tag == None:
+>         return None
+> 
+>     m = regex.match(str(lookup_tag))
+> 
+>     if m:
+>         # Those types of printers defined in isl.
+>         if m.group(1) in [
+>             "basic_set",
+>             "set",
+>             "union_set",
+>             "basic_map",
+>             "map",
+>             "union_map",
+>             "qpolynomial",
+>             "pw_qpolynomial",
+>             "pw_qpolynomial_fold",
+>             "union_pw_qpolynomial",
+>             "union_pw_qpolynomial_fold",
+>         ]:
+>             return IslObjectPrinter(val, m.group(1))
+>     return None
+> 
+
+processing:
+   >>>  input==> libisl.23.dylib-gdb.py
+   >>> output==> new.libisl.23.dylib-gdb.py
+
+Traceback (most recent call last):
+  File "/Users/klaus/.env/bin/addend", line 8, in <module>
+    sys.exit(main())
+  File "/Users/klaus/.env/lib/python3.9/site-packages/addend/command_line.py", line 4, in main
+    addend.main()
+  File "/Users/klaus/.env/lib/python3.9/site-packages/addend/addend.py", line 911, in main
+    type, data, cache = classify_lines(pydata)
+  File "/Users/klaus/.env/lib/python3.9/site-packages/addend/addend.py", line 461, in classify_lines
+    index = testMLComment(data, type, index)
+  File "/Users/klaus/.env/lib/python3.9/site-packages/addend/addend.py", line 272, in testMLComment
+    lineHasMLC = MLC_regex.search(data[index])
+IndexError: list index out of range

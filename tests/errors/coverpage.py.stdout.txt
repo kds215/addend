@@ -1,0 +1,38 @@
+error: cannot format coverpage.py: Cannot parse: 53:8: 		print "Cannot import the image from file %s" % imagePath
+Python 2 support was removed in version 22.0.
+
+processing:
+   >>>  input==> coverpage.py
+   >>> saveAs==> coverpage.1124_231845.py
+   >>> output==> coverpage.py
+
+
+
+...pre-processing syntax checker: 'black --quiet coverpage.py' failed code: '123'
+
+
+error: cannot format coverpage.py: Cannot parse: 53:8: 		print "Cannot import the image from file %s" % imagePath
+Python 2 support was removed in version 22.0.
+
+processing:
+   >>>  input==> coverpage.py
+   >>> saveAs==> coverpage.1124_231845.py
+   >>> output==> coverpage.py
+
+
+
+...pre-processing syntax checker: 'black --quiet coverpage.py' failed code: '123'
+
+
+error: cannot format coverpage.py: Cannot parse: 53:8: 		print "Cannot import the image from file %s" % imagePath
+Python 2 support was removed in version 22.0.
+
+processing:
+   >>>  input==> coverpage.py
+   >>> output==> new.coverpage.py
+
+
+
+...pre-processing syntax checker: 'black --quiet coverpage.py' failed code: '123'
+
+

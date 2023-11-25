@@ -1,0 +1,38 @@
+error: cannot format import-zips.py: Cannot parse: 22:10:     print 'usage:', argv[0], '<zipfile>...'
+Python 2 support was removed in version 22.0.
+
+processing:
+   >>>  input==> import-zips.py
+   >>> saveAs==> import-zips.1124_231851.py
+   >>> output==> import-zips.py
+
+
+
+...pre-processing syntax checker: 'black --quiet import-zips.py' failed code: '123'
+
+
+error: cannot format import-zips.py: Cannot parse: 22:10:     print 'usage:', argv[0], '<zipfile>...'
+Python 2 support was removed in version 22.0.
+
+processing:
+   >>>  input==> import-zips.py
+   >>> saveAs==> import-zips.1124_231851.py
+   >>> output==> import-zips.py
+
+
+
+...pre-processing syntax checker: 'black --quiet import-zips.py' failed code: '123'
+
+
+error: cannot format import-zips.py: Cannot parse: 22:10:     print 'usage:', argv[0], '<zipfile>...'
+Python 2 support was removed in version 22.0.
+
+processing:
+   >>>  input==> import-zips.py
+   >>> output==> new.import-zips.py
+
+
+
+...pre-processing syntax checker: 'black --quiet import-zips.py' failed code: '123'
+
+
