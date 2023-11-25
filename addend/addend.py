@@ -1,22 +1,23 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Name: addend.py  KDS 11/22/2023
+# Name: addend.py  KDS 11/25/2023
 
-isVersion = "1.15"  
+isVersion = "1.16"  
 
-# KDS added :end: block for try:, except: & finally: statements
+# KDS use'black' /w '-S -C' ; fix for testMLComment index overrun bug
 
 """
-isVersion = "1.14"  # KDS 11/20/23 changes for pip deployment on windows and MacOS
-isVersion = "1.12"  # KDS 11/19/23 switched to addend; no more 'python addend.py'
-isVersion = "1.11"  # KDS 11/18/23 changed to optional different output filename
-                    # i.e. [-h] [-r] [-d] [-v] [inFilename] [outFilename]
-isVersion = "1.10"  # KDS 11/17/23 fixed raw syntax re.split(r"\\S", string)
-isVersion = "1.09"  # KDS 11/17/23 test for posix-style path for windows;
-                    # use subprocess(['black,...], shell=True)
-isVersion = "1.08"  # KDS 11/16/23 removed the [ "-n" noblanklines ] option
-isVersion = "1.07"  # KDS 11/15/23 initial BETA release
+#isVersion = "1.15"  # KDS added :end: block for try:, except: & finally: statements
+#isVersion = "1.14"  # KDS 11/20/23 changes for pip deployment on windows and MacOS
+#isVersion = "1.12"  # KDS 11/19/23 switched to addend; no more 'python addend.py'
+#isVersion = "1.11"  # KDS 11/18/23 changed to optional different output filename
+                     # i.e. [-h] [-r] [-d] [-v] [inFilename] [outFilename]
+#isVersion = "1.10"  # KDS 11/17/23 fixed raw syntax re.split(r"\\S", string)
+#isVersion = "1.09"  # KDS 11/17/23 test for posix-style path for windows;
+                     # use subprocess(['black,...], shell=True)
+#isVersion = "1.08"  # KDS 11/16/23 removed the [ "-n" noblanklines ] option
+#isVersion = "1.07"  # KDS 11/15/23 initial BETA release
 
 Info: (for more see README.md)
 
@@ -229,11 +230,19 @@ import_regex = re.compile(r"^\s*import ")
 # from
 from_regex = re.compile(r"^\s*from ")
 
-# multi line comment checks anywhere in the line for "\"" or '''
-MLC_regex = re.compile(r'^.*("""|\'\'\').*')
+# multi line comment check for single line "\"" start & end
+MLC1Ldq_regex = re.compile(r'^.*((\"{3}).+(\"{3})){1}.*$') 
+
+# multi line comment check for single line '\'' start & end
+MLC1Lsq_regex = re.compile(r'^.*((\'{3}).+(\'{3})){1}.*$')
+
+# multi line comment check for start or end in line for "\""
+MLCdq_regex = re.compile(r'.*(\"{3}\s*){1,1}.*')
+
+# multi line comment check for start or end in line for '\''
+MLCsq_regex = re.compile(r'.*(\'{3}\s*){1,1}.*') 
 
 # def section starts here
-
 
 # python uses 4 spaces to indent; normal tab is 8 spaces
 def getIndentCount(string):
@@ -269,14 +278,33 @@ def testMLComment(data, type, index):
     isLastMLC_line = False
 
     while not isLastMLC_line:
-        lineHasMLC = MLC_regex.search(data[index])
 
-        # not a multi line comment section
+        # first get single line MLC comments out of the way:
+        # single MLC line has start and end '\'' or "\""
+        lineHas1Ldq = MLC1Ldq_regex.search(data[index])
+        lineHas1Lsq = MLC1Lsq_regex.search(data[index])
+        if lineHas1Ldq or lineHas1Lsq:
+            # type line [ indent=0, type cache[1]="MLC", 0=not a blockStarter ]
+            type[index] = [0, isMLC, noBLOCK]
+            index += 1
+            break
+
+        # check for start or end of multi line comment "\""
+        hasDoubleQuotes = MLCdq_regex.search(data[index])
+        # check for start or end of multi line comment '\''
+        hasSingleQuotes = MLCsq_regex.search(data[index])
+
+        if hasDoubleQuotes or hasSingleQuotes:
+            lineHasMLC = True
+        else:
+            lineHasMLC = False
+
+        # not a start or end of MLC section
         if not isMLC_lines and not lineHasMLC:
             return index
         # :end: if
 
-        # beginning of MLC comment section
+        # start / beginning of MLC comment section
         if not isMLC_lines and lineHasMLC:
             isMLC_lines = True
             # type line [ indent=0, type cache[1]="MLC", 0=not a blockStarter ]
@@ -325,10 +353,10 @@ def load_input(filename):
     # run black syntax checker on input python file just to be sure...
 
     if isPlatform == "Windows":
-        success_code = subprocess.call(["black", "--quiet", filename], shell=True)
+        success_code = subprocess.call(["black", "-C", "-S", "-q", filename], shell=True)
     # :end: if
     else:
-        success_code = subprocess.call(["black", "--quiet", filename])
+        success_code = subprocess.call(["black", "-C", "-S", "-q", filename])
     # :end: else:
 
     if success_code != 0:
@@ -340,6 +368,7 @@ def load_input(filename):
 
     # load input file and drop all #endLabel comments
     with open(filename, "r") as f:
+
         data_without_endLabels = []
 
         for line in f:
