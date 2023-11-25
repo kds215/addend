@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# rev = 1.0  date 11/24/2023 KDS
+
+echo "MacOS testing addend: runaddendTest1\n"
+
+orig="orig1" 
+out="out1"
+
+# Check if the dir exists
+if [ ! -d $orig ]; then
+    echo "Error: dir '$orig' does not exist."
+    exit 1
+fi
+
+cd $orig ; ls *.py > ../$orig.files
+#cd ../orig2 ; ls *.py > ../orig2.files
+cd ..
+
+filename="$orig.files"
+
+# Check if the file exists
+if [ ! -f $filename ]; then
+    echo "Error: file '$filename' does not exist."
+    exit 1
+fi
+
+# copy orig to out dir
+echo -e "  ...rm..."
+rm -v $out/*.py
+rm -v $out/*.txt
+echo -e "  ...cp..."
+cp $orig/*.py $out/
+cd $out
+
+echo -e "addend -h" > _addend.stdout.txt 2>&1
+addend -h >> _addend.stdout.txt 2>&1
+echo -e " " >> _addend.stdout.txt 2>&1
+echo -e "addend --help" >> _addend.stdout.txt 2>&1
+addend --help >> _addend.stdout.txt 2>&1
+echo -e " " >> _addend.stdout.txt 2>&1
+addend -v >> _addend.stdout.txt 2>&1
+addend --version >> _addend.stdout.txt 2>&1
+
+while IFS= read -r file; do
+  echo "addend $file"
+  addend $file > $file.stdout.txt 2>&1
+  addend -d -r $file >> $file.stdout.txt 2>&1
+  diff ../$orig/$file $file >> $file.stdout.txt 2>&1
+  addend $file new.$file >> $file.stdout.txt 2>&1
+done < ../$filename
+
