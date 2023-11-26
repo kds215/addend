@@ -3,9 +3,9 @@
 
 # Name: addend.py  KDS 11/25/2023
 
-isVersion = "1.16"  
+isVersion = "1.16"
 
-# KDS use'black' /w '-S -C' ; fix for testMLComment index overrun bug
+# KDS made syntax checker 'black -S -C -q' optional ; fix for testMLComment index overrun bug
 
 """
 #isVersion = "1.15"  # KDS added :end: block for try:, except: & finally: statements
@@ -34,7 +34,7 @@ Info: (for more see README.md)
  while they simultaneously deciphering python code and intently listening
  to unfamiliar python code with their favorite reader like JAWS or NVDA.
 
- Requirement:     'black' a python syntax checker
+ Optional:         automatically run 'black' a python syntax checker
  to install use:  'pip install black'
 
  To install 'addend' on MacOS or Windows platform use:
@@ -45,7 +45,7 @@ Run 'addend' from command line without leading 'python' and '.py' :
 
 % addend -h 
 
-usage: addend [-h] [-r] [-d] [-v] [inFilename] [outFilename]
+usage: addend [-h] [-b] [-r] [-d] [-v] [inFilename] [outFilename]
 
 positional arguments:
   inFilename     process input inFilename.py to add '# :end:' lines based on python indent rules.
@@ -53,6 +53,7 @@ positional arguments:
 
 optional arguments:
   -h, --help     show this help message and exit
+  -b, --black    run 'black' python syntax checker before & after 'addend' processing.
   -r, --remove   ONLY remove ALL '# :end:' comment lines from input filename.
   -d, --debug    print debugging lines.
   -v, --version  print version number.
@@ -88,7 +89,7 @@ optional arguments:
 
  Process flow:
  [1] read input.py and drop any prior #endLabel lines and write newinput.py
- [2] run "black" syntax checker on newinput.py
+ [2] optionally run "black" syntax checker on newinput.py
  [3] in case of any "black" errors processing stops.
  [4] read newinput.py file into line_array
 
@@ -96,10 +97,11 @@ optional arguments:
    (a) indentLevel, (b) syntaxType: class, def, ..., (c) blockStarter 0/1
    
    syntaxType is [ 'code', 'MLC', 'cont' ]
-        blockStarts are [ 'class name', 'def name', if, for, while ]
-        statement syntax [ return, continue, break, pass, ...]
-        no statement syntax [ #, blank, empty ]
-        MLC is for multi line comments
+    blockStarts are [ 
+        'class name', 'def name', if, elif, else, for, while, with, try, except, finally ]
+    statement syntax [ return, continue, break, pass, ...]
+    without statement syntax [ #, blank, empty ]
+    MLC is for multi line comments
    
  [6] loop over array of all python code lines
  
@@ -123,7 +125,7 @@ optional arguments:
      set savedIndentLevelValue from currentIndentLevelValue
 
  [7] write lines_array to temp_file.py
- [8] run syntax checker 'black' on temp_file.py
+ [8] optionally run syntax checker 'black' on temp_file.py
  [9] rename input.py to input.MMDD_hhmmss.py
  [10] rename temp_file.py to infile.py
 
@@ -166,6 +168,9 @@ debug = False
 
 # '-r or --remove' ONLY '# :end:' comment lines
 removeAllEndLinesOnly = False
+
+# run 'black' python syntax checker before & after :end: processing
+runBlackSyntaxChecker = False
 
 # required input file
 inFilename = ""
@@ -218,8 +223,8 @@ with_regex = re.compile(r"^\s*with ")
 # try
 try_regex = re.compile(r"^\s*try:")
 
-# except
-except_regex = re.compile(r"^\s*except.*:")
+# except (!?! eXcept_regex because otherwise it matches itself !?!)
+eXcept_regex = re.compile(r'^\s*except.*:')
 
 # finally
 finally_regex = re.compile(r"^\s*finally:")
@@ -230,19 +235,20 @@ import_regex = re.compile(r"^\s*import ")
 # from
 from_regex = re.compile(r"^\s*from ")
 
-# multi line comment check for single line "\"" start & end
-MLC1Ldq_regex = re.compile(r'^.*((\"{3}).+(\"{3})){1}.*$') 
+# MLC single line "\"" start & end
+MLC1Ldq_regex = re.compile(r'^.*((\"{3}).+(\"{3})){1}.*$')
 
-# multi line comment check for single line '\'' start & end
+# MLC single line '\'' start & end
 MLC1Lsq_regex = re.compile(r'^.*((\'{3}).+(\'{3})){1}.*$')
 
-# multi line comment check for start or end in line for "\""
+# MLC for start or end in line for "\""
 MLCdq_regex = re.compile(r'.*(\"{3}\s*){1,1}.*')
 
-# multi line comment check for start or end in line for '\''
-MLCsq_regex = re.compile(r'.*(\'{3}\s*){1,1}.*') 
+# MLC for start or end in line for '\''
+MLCsq_regex = re.compile(r'.*(\'{3}\s*){1,1}.*')
 
 # def section starts here
+
 
 # python uses 4 spaces to indent; normal tab is 8 spaces
 def getIndentCount(string):
@@ -278,7 +284,6 @@ def testMLComment(data, type, index):
     isLastMLC_line = False
 
     while not isLastMLC_line:
-
         # first get single line MLC comments out of the way:
         # single MLC line has start and end '\'' or "\""
         lineHas1Ldq = MLC1Ldq_regex.search(data[index])
@@ -288,6 +293,7 @@ def testMLComment(data, type, index):
             type[index] = [0, isMLC, noBLOCK]
             index += 1
             break
+        # :end: if
 
         # check for start or end of multi line comment "\""
         hasDoubleQuotes = MLCdq_regex.search(data[index])
@@ -296,8 +302,10 @@ def testMLComment(data, type, index):
 
         if hasDoubleQuotes or hasSingleQuotes:
             lineHasMLC = True
+        # :end: if
         else:
             lineHasMLC = False
+        # :end: else:
 
         # not a start or end of MLC section
         if not isMLC_lines and not lineHasMLC:
@@ -350,25 +358,26 @@ def testMLComment(data, type, index):
 
 
 def load_input(filename):
-    # run black syntax checker on input python file just to be sure...
+    if runBlackSyntaxChecker:
+        # option -b: run 'black' syntax checker on input python file just to be sure...
 
-    if isPlatform == "Windows":
-        success_code = subprocess.call(["black", "-C", "-S", "-q", filename], shell=True)
-    # :end: if
-    else:
-        success_code = subprocess.call(["black", "-C", "-S", "-q", filename])
-    # :end: else:
+        if isPlatform == "Windows":
+            success_code = subprocess.call(["black","-C","-S","-q",filename],shell=True)
+        # :end: if
+        else:
+            success_code = subprocess.call(["black","-C","-S","-q",filename])
+        # :end: else:
 
-    if success_code != 0:
-        print(
-            f"\n\n...pre-processing syntax checker: 'black --quiet {filename}' failed code: '{success_code}'\n\n"
-        )
-        exit()
+        if success_code != 0:
+            print(
+                f"\n\n...pre-processing syntax checker: 'black --quiet {filename}' failed code: '{success_code}'\n\n"
+            )
+            exit()
+        # :end: if
     # :end: if
 
     # load input file and drop all #endLabel comments
     with open(filename, "r") as f:
-
         data_without_endLabels = []
 
         for line in f:
@@ -394,9 +403,8 @@ def load_input(filename):
 
 
 def write_output(filename, data_EBS):
-
     # remove temp last line that enforced proper :end: closing
-    data_EBS.pop() 
+    data_EBS.pop()
 
     # write output file containing #endLabel comments
     with open(filename, "w") as f:
@@ -602,7 +610,7 @@ def classify_lines(data):
         # :end: if
 
         isExcept, index = upd_indent(
-            "except", except_regex, data, type, index, cache, identLevel, startsBLOCK
+            "except", eXcept_regex, data, type, index, cache, identLevel, startsBLOCK
         )
         if isExcept:
             continue
@@ -614,7 +622,6 @@ def classify_lines(data):
         if isFinally:
             continue
         # :end: if
-
 
         # must be plain line of code
         type[index] = [identLevel, isCODE, noBLOCK]
@@ -826,11 +833,7 @@ def main():
     global isPlatform, imax, noBLOCK, startsBLOCK
     global isCODE, isMLC, isCONT, isBLANK, isCOMM
     global endLabel, debug, removeAllEndLinesOnly
-    global endLabel_regex, comment_regex, blank_regex, cont_regex
-    global class_regex, def_regex, if_regex, else_regex
-    global elif_regex, for_regex, while_regex, with_regex
-    global import_regex, from_regex, MLC_regex
-    global try_regex, except_regex, finally_regex
+    global runBlackSyntaxChecker
 
     # start processing python input file...
     #
@@ -845,22 +848,28 @@ def main():
     parser = argparse.ArgumentParser(prog=execname)
 
     parser.add_argument(
+        "-b",
+        "--black",
+        action="store_true",
+        help="run 'black' python syntax checker before & after 'addend' processing.",
+    )
+    parser.add_argument(
         "-r",
         "--remove",
         action="store_true",
         help="ONLY remove ALL '# :end:' comment lines from input filename.",
     )
     parser.add_argument(
-        "-d",
-        "--debug",
-        action="store_true",
-        help="print debugging lines.",
+        "-d", 
+        "--debug", 
+        action="store_true", 
+        help="print debugging lines."
     )
     parser.add_argument(
-        "-v",
-        "--version",
-        action="store_true",
-        help="print version number.",
+        "-v", 
+        "--version", 
+        action="store_true", 
+        help="print version number."
     )
     parser.add_argument(
         "inFilename",
@@ -876,6 +885,10 @@ def main():
     )
 
     args = parser.parse_args()
+
+    if args.black:
+        runBlackSyntaxChecker = True
+    # :end: if
 
     if args.remove:
         removeAllEndLinesOnly = True
@@ -965,30 +978,34 @@ def main():
         # :end: if
         write_output(endfile, data_EBC)
 
-        # run black syntax checker on new python file to be sure...
-        if isPlatform == "Windows":
-            success_code = subprocess.call(["black", "--quiet", endfile], shell=True)
-        # :end: if
-        else:
-            success_code = subprocess.call(["black", "--quiet", endfile])
-        # :end: else:
+        if runBlackSyntaxChecker:
+            # run black syntax checker on new python file to be sure...
+            if isPlatform == "Windows":
+                success_code = subprocess.call(["black","-C","-S","-q",endfile],shell=True)
+            # :end: if
+            else:
+                success_code = subprocess.call(["black","-C","-S","-q",endfile])
+            # :end: else:
 
-        if success_code != 0:
-            print(
-                f"\n   >>> post-processing syntax checker: 'black --quiet {endfile}' failed\n"
-            )
-            print(f"   >>> input file '{inFilename}' has NOT changed.")
-            print(
-                f"   >>> run 'black {endfile}' for possible reasons why 'black' syntax checker has failed.\n\n"
-            )
+            if success_code != 0:
+                print(
+                    f"\n   >>> post-processing syntax checker: 'black --quiet {endfile}' failed\n"
+                )
+                print(f"   >>> input file '{inFilename}' has NOT changed.")
+                print(
+                    f"   >>> run 'black {endfile}' for possible reasons why 'black' syntax checker has failed.\n\n"
+                )
+            # :end: if
         # :end: if
 
-        # on 'black' success switching temp file into output file
+        # check on 'black' success to switch file into output file
         if os.path.exists(endfile):
             if outFilename:
+                # in case outFilename was specified
                 os.rename(endfile, outFilename)
             # :end: if
             else:
+                # in case only inFilename was specified
                 os.rename(endfile, inFilename)
             # :end: else:
         # :end: if
@@ -1023,5 +1040,3 @@ def main():
 if __name__ == "__main__":
     main()
 # :end: if
-
-
