@@ -3,7 +3,7 @@
 
 # Name: addend.py  KDS 11/25/2023
 
-isVersion = "1.16"
+isVersion = "1.17"
 
 # KDS made syntax checker 'black -S -C -q' optional ; fix for testMLComment index overrun bug
 
