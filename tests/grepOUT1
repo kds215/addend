@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# rev = 1.0  date 11/26/2023 KDS
+
+echo -n "grep OUT1 for 'IndexErrors:'"
+
+find out1 -name '*.txt' -print -exec grep 'IndexError:' {} \; > grepOut1.txt
+
