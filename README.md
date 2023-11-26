@@ -1,5 +1,5 @@
 # addend
- This `'addend.py'` code is a python utility intended for the `BLIND` folks.
+ This `'addend.py'` code is a python utility intended for the `BLIND` python programmer.
 
  For Visual Impaired (VI) folks it is NOT easy to listen to and
  explore large python code files where the number of indent spaces
@@ -15,37 +15,37 @@
  Python started in 1991 and is now a popular programming language because of
  its syntax simplicity and success in Data Science & ML Projects. 
  With the advent of python-based LLMs the use of python has increased 
- dramatically leaving blind programmers at a disadvantage in that field.
+ dramatically leaving blind python programmers at a disadvantage in that field.
  Python is an "offside" language depending solely on the different space
  indentation to close syntax blocks. This makes it difficult for
  blind folks to study unfamiliar python code and to listen at the 
  same time to readers like JAWS or NVDA.
  
- Below highlights the blind's dilemma - advice given by a python 
- developer to folks working in python:
+ Below highlights the blind python programmer's dilemma - advice given
+ by a python developer to folks working in python:
 
  "Generally, if you're used to curly braces {} language, 
   just indent the code like them and you'll be fine." 
 
   <b>should be expanded to ==></b> "except when you are blind and depend on a reader".
 
- Blind folks are disadvantaged in today's fast past AI work environments when it comes to using python.
+ Blind folks are disadvantaged in today's fast past AI work environments 
+ when it comes to programming in python.
 
- 'addend' is hopefully a simple step to make it easier for the
- VI folks to use JAWS or NVDA readers and work on 
- large & unfamiliar python files. 
+ 'addend' is hopefully a simple step to make it easier for the VI folks
+ to use JAWS or NVDA readers while working on large & unfamiliar python files. 
 
  The basics for working with 'addend':
 <pre><code>
- [1] use it in conjunction with VScode:
+ [1] use it in conjunction with VScode or any other editor:
    ==>  'code my_large.py'       launch python file in VScode
-   ==>  'addend my_large.py'     run in cmd/terminal window
+   ==>  'addend my_large.py'     run in cmd or terminal window
       a backup 'my_large.MMDD.hhmmss.py' is automatically created
       and VScode updates showing '# :end:' comments.
 
  [2] use it to keep original file untouched, use new file that is generated:
    ==> 'addend my_large.py new_large.py'
-      'code new_large.py' VScode shows the added '# :end:' comments.
+       'code new_large.py' VScode shows the added '# :end:' comments.
 
  [3] to remove any added '# :end:' comments use:
    ==> 'addend -r new_large.py'       (output to same file)
@@ -55,8 +55,8 @@
  
  Python version: >=3.7 installation is required.
 
- Other requirement:     'black' a python syntax checker
-    to install use:     'pip install black'
+ Optional requirement:     to run [-b] option: 'black' python syntax checker
+       to install use:     'pip install black'
 
  To install 'addend' on MacOS or Windows platform use:
 
@@ -66,17 +66,18 @@
 
  % 'addend --help' 
 
- usage: addend [-h] [-r] [-d] [-v] [inFilename] [outFilename]
+ usage: addend [-h] [-b] [-r] [-d] [-v] [inFilename] [outFilename]
 
  positional arguments:
-  inFilename     process input inFilename.py to add '# :end:' lines based on python indent rules.
-  outFilename    specify optional outFilename.py ; DEFAULT is inFilename.py is replaced.
+   inFilename     process input inFilename.py to add '# :end:' lines based on python indent rules.
+   outFilename    specify OPTIONAL outFilename.py ; DEFAULT output is same inFilename.
 
  optional arguments:
-  -h, --help     show this help message and exit
-  -r, --remove   ONLY remove ALL '# :end:' comment lines from input filename.
-  -d, --debug    print debugging lines.
-  -v, --version  print version number.
+   -h, --help     show this help message and exit
+   -b, --black    run 'black' python syntax checker before & after 'addend' processing.
+   -r, --remove   ONLY remove ALL '# :end:' comment lines from input filename.
+   -d, --debug    print debugging lines.
+   -v, --version  print version number.
 
     Default output is 'inFilename.py' with '# :end:' comments added.
     Unchanged input file is SAVED as 'inFilename.MMDD-hhmmss.py'
