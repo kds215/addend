@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Name: addend.py  KDS 11/25/2023
+# Name: addend.py  KDS 11/26/2023
 
-isVersion = "1.17"
+isVersion = "1.18"
 
 # KDS made syntax checker 'black -S -C -q' optional ; fix for testMLComment index overrun bug
 
@@ -272,9 +272,9 @@ def getIndentCount(string):
     # :end: if
 
     return count
-
-
 # :end: def getIndentCount
+
+
 
 
 # multiple lines processing to identify multi line comments
@@ -352,9 +352,9 @@ def testMLComment(data, type, index):
     # :end: while
 
     return index
-
-
 # :end: def testMLComment
+
+
 
 
 def load_input(filename):
@@ -397,9 +397,9 @@ def load_input(filename):
     data_without_endLabels.append("#!!end: ")
 
     return data_without_endLabels
-
-
 # :end: def load_input
+
+
 
 
 def write_output(filename, data_EBS):
@@ -412,9 +412,9 @@ def write_output(filename, data_EBS):
             f.write(line)
         # :end: for
     # :end: with
-
-
 # :end: def write_output
+
+
 
 
 #  update type array with indentLevel and index-to-cached-syntax and blockStarter
@@ -454,9 +454,9 @@ def upd_indent(keyword, is_regex, data, type, index, cache, identLevel, startsBl
     # :end: if
 
     return match, index
-
-
 # :end: def upd_indent
+
+
 
 
 # creates type array classifying python code lines
@@ -495,7 +495,17 @@ def classify_lines(data):
         # :end: if
 
         # skips all MLC lines start->end by changing index
-        index = testMLComment(data, type, index)
+        try:
+            index = testMLComment(data, type, index)
+        # :end: try
+        except:
+            print(f"   <*>  *EXCEPTION* during Multi-Line-Comment (MLC) processing ...")
+            print(f"   <*>  'addend' stopped processing and *NO* output was generated.")
+            print(f"   <*>  Check ALL MLC sections, like \"\"\" or \'\'\', for proper Start<->End.\n")
+            exit()
+        # :end: except
+
+        # no exception so all must be well
         if index >= imax:
             break
         # :end: if
@@ -633,9 +643,9 @@ def classify_lines(data):
     # :end: while
 
     return type, data, cache
-
-
 # :end: def classify_lines
+
+
 
 
 def insert_End_comment(type, data, index, cache, currentIndentValue, indentStack):
@@ -725,9 +735,9 @@ def insert_End_comment(type, data, index, cache, currentIndentValue, indentStack
     # :end: while
 
     return
-
-
 # :end: def insert_End_comment
+
+
 
 
 # appends End_Block_Comments to only python code lines
@@ -806,9 +816,9 @@ def add_EndBlockComments(type, data, cache):
     # :end: while
 
     return data
-
-
 # :end: def add_EndBlockComments
+
+
 
 
 def getBackupFilename(inputFilename):
@@ -818,9 +828,9 @@ def getBackupFilename(inputFilename):
     backupFilename = re.sub(r".py$", timeName, inputFilename)
 
     return backupFilename
-
-
 # :end: def getBackupFilename
+
+
 
 
 ##################################
@@ -1032,9 +1042,9 @@ def main():
     # :end: else:
 
     exit()
-
-
 # :end: def main
+
+
 
 
 if __name__ == "__main__":
