@@ -2,7 +2,7 @@
 
 # rev = 1.0  date 11/24/2023 KDS
 
-echo "MacOS testing addend: runaddendTest1\n"
+echo "MacOS testing addend: runaddendTest1"
 
 orig="orig1" 
 out="out1"
@@ -14,7 +14,6 @@ if [ ! -d $orig ]; then
 fi
 
 cd $orig ; ls *.py > ../$orig.files
-#cd ../orig2 ; ls *.py > ../orig2.files
 cd ..
 
 filename="$orig.files"
@@ -43,10 +42,13 @@ addend -v >> _addend.stdout.txt 2>&1
 addend --version >> _addend.stdout.txt 2>&1
 
 while IFS= read -r file; do
-  echo "addend $file"
-  addend $file > $file.stdout.txt 2>&1
+  echo "testing1: addend $file"
+  echo "addend $file" > $file.stdout.txt 2>&1
+  addend $file >> $file.stdout.txt 2>&1
+  echo "addend -d -r $file" >> $file.stdout.txt 2>&1
   addend -d -r $file >> $file.stdout.txt 2>&1
   diff ../$orig/$file $file >> $file.stdout.txt 2>&1
+  echo "addend $file new.$file" >> $file.stdout.txt 2>&1
   addend $file new.$file >> $file.stdout.txt 2>&1
 done < ../$filename
 
